@@ -17,7 +17,6 @@ dpkg-reconfigure console-setup
 ## silencie mensagens do kernel no console
 "append loglevel=3 to /etc/kernel/cmdline"
 update-initramfs -u -k all
-
 reboot
 
 ## remove initial "bloat" (40 MB)
