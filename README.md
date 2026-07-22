@@ -1,12 +1,36 @@
 # debian13-macbookpro12-1
-Step-by-step installation guide for Debian 13 (minimal) in a MacBookPro12,1
+Step-by-step installation guide for Debian 13 (minimal) in a MacBookPro12,1:
 
-Debian
+select expert install;
+localization set to C (no localization);
+do not load "missing" firmware;
+create an user account later;
+set time to UTC;
+manual partition (UEFI, /, and /home), with encrypted /home, and noatime set;
+use non-free firmware and nonfree software, but no source repository;
+no automatic updates, no package usage survey, deselect all software;
+install systemd-boot;
 
-# Instalado com partição manual (sem criptografia) e noatime (/ e /home). Sem conta root. Sem software selecionado. Sem atualizações automáticas. Sem popcon. Bootloader systemd-boot.
+# adjust console font and encoding
+dpkg-reconfigure console-setup
 
-# ajuste da fonte no console
-sudo dpkg-reconfigure console-setup
+# silencie mensagens do kernel no console
+# append loglevel=3 to /etc/kernel/cmdline
+update-initramfs -u -k all
+
+reboot
+
+# remove initial "bloat" (≈40 MB)
+apt purge --autoremove anacron bluetooth cron cron-daemon-common debconf-i18n installation-report nano tasksel vim-common vim-tiny wireless-tools
+truncate -s 0 /etc/motd
+rm /etc/update-motd.d/10-uname
+
+# install basic tools (198 MB)
+apt update
+apt install curl git man-db neovim
+
+# install iwd and systemd additional/alternative tools
+apt install iwd systemd-cron systemd-homed systemd-oomd systemd-resolved systemd-timesyncd systemd-userdbd systemd-zram-generator
 
 # data e hora
 sudo apt install systemd-timesyncd
@@ -15,20 +39,6 @@ sudo timedatectl set-local-rtc 0
 sudo timedatectl set-timezone America/Sao_Paulo
 sudo timedatectl set-ntp true
 timedatectl status
-
-# remove anacron & cron daemons
-sudo apt purge —autoremove anacron cron cron-daemon-common
-
-# remove dicionários
-sudo apt purge —autoremove dictionaries-common iamerican ibritish ienglish-common ispell task-english wamerican
-
-# remove internacionalização
-sudo apt purge —autoremove debconf-i18n
-
-# instalando neovim e limpando outros editores
-sudo apt update
-sudo apt purge —autoremove nano vim-common vim-tiny
-sudo apt install neovim
 
 # Ajuste do módulo de Wi-Fi
 
@@ -49,10 +59,6 @@ resolvectl status
 sudo apt purge --autoremove dhcpcd-base ifupdown wireless-tools wpasupplicant
 sudo rm -rf /etc/network/ /run/network/
 
-
-# silencie mensagens do kernel no console
-# append loglevel=3 to /etc/kernel/cmdline
-sudo update-initramfs -u -k all
 
 # Firewall
 sudo apt install ufw
@@ -77,15 +83,10 @@ sudo systemctl enable —now mbpfan
 TODO: powertop já instalado, configurar com bateria.
 
 # Build tools
-sudo apt install build-essential gfortran git curl apt-file unzip
-
-# documentação
-sudo apt install man-db
+sudo apt install build-essential gfortran
 
 # login motd
 sudo apt install fastfetch
-sudo truncate -s 0 /etc/motd
-sudo rm /etc/update-motd.d/10-uname
 # crie /etc/update-motd.d/99-fastfetch
 
 #!/bin/sh
