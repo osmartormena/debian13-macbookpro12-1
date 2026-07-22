@@ -20,7 +20,7 @@ update-initramfs -u -k all
 
 reboot
 
-# remove initial "bloat" (≈40 MB)
+# remove initial "bloat" (40 MB)
 apt purge --autoremove anacron bluetooth cron cron-daemon-common debconf-i18n installation-report nano tasksel vim-common vim-tiny wireless-tools
 truncate -s 0 /etc/motd
 rm /etc/update-motd.d/10-uname
@@ -29,36 +29,47 @@ rm /etc/update-motd.d/10-uname
 apt update
 apt install curl git man-db neovim
 
-# install iwd and systemd additional/alternative tools
+# install iwd and systemd additional/alternative tools (32 MB)
 apt install iwd systemd-cron systemd-homed systemd-oomd systemd-resolved systemd-timesyncd systemd-userdbd systemd-zram-generator
+systemctl daemon-reload
 
-# data e hora
-sudo apt install systemd-timesyncd
-sudo systemctl enable --now systemd-timesyncd
-sudo timedatectl set-local-rtc 0
-sudo timedatectl set-timezone America/Sao_Paulo
-sudo timedatectl set-ntp true
-timedatectl status
-
-# Ajuste do módulo de Wi-Fi
-
-sudo apt install iwd systemd-resolved
-
-sudo systemctl disable --now  ifup@wlp3s0.service ifupdown-pre.service  networking.service wpa_supplicant.service
-
+## networking (iwd and systemd-resolved)
+systemctl disable --now  ifup@wlp3s0.service ifupdown-pre.service  networking.service wpa_supplicant.service
 # edit /etc/iwd/main.conf
-EnableNetworkConfiguration=true
-NameResolvingService=systemd
+  EnableNetworkConfiguration=true
+  NameResolvingService=systemd
 
-sudo systemctl enable --now iwd systemd-resolved
-sudo iwctl
+systemctl enable --now iwd.service systemd-resolved.service
+iwctl
 
-sudo systemctl restart iwd.service systemd-resolved.service
+systemctl restart iwd.service systemd-resolved.service
 resolvectl status
 
-sudo apt purge --autoremove dhcpcd-base ifupdown wireless-tools wpasupplicant
-sudo rm -rf /etc/network/ /run/network/
+apt purge --autoremove dhcpcd-base ifupdown wpasupplicant
+rm -rf /etc/network/ /run/network/
 
+## cron jobs (systemd-cron)
+systemctl enable --now cron.target
+systemctl status cron.target
+systemctl list-timers
+
+# (systemd-homed)
+
+# (systemd-oomd)
+
+# time synchronization (systemd-timesyncd)
+systemctl enable --now systemd-timesyncd.service
+timedatectl set-local-rtc 0
+timedatectl set-timezone America/Sao_Paulo
+timedatectl set-ntp true
+timedatectl status
+
+# (systemd-userdbd)
+
+# swap in zram (systemd-zram-generator)
+cp /usr/lib/systemd/zram-generator.conf /etc/systemd
+systemctl start /dev/zram0
+zramctl
 
 # Firewall
 sudo apt install ufw
@@ -67,13 +78,6 @@ sudo ufw default allow outgoing
 sudo systemctl enable —now ufw
 sudo ufw enable
 sudo /sbin/ufw status
-
-# zram 
-sudo apt install systemd-zram-generator
-sudo cp /usr/lib/systemd/zram-generator.conf /etc/systemd
-sudo systemctl daemon-reload
-sudo systemctl start /dev/zram0
-sudo /sbin/zramctl
 
 # Apple hardware tweaks
 sudo apt install mbpfan
