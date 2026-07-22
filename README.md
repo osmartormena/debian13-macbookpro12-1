@@ -13,6 +13,12 @@ install systemd-boot;
 
 ## adjust console font and encoding
 dpkg-reconfigure console-setup
+cat >> $HOME << EOF
+
+export LANG="C.UTF-8"
+EOF
+
+dpkg-reconfigure keyboard-configuration
 
 ## silencie mensagens do kernel no console
 "append loglevel=3 to /etc/kernel/cmdline"
@@ -24,9 +30,9 @@ apt purge --autoremove anacron bluetooth cron cron-daemon-common debconf-i18n in
 truncate -s 0 /etc/motd
 rm /etc/update-motd.d/10-uname
 
-## install basic tools (200 MB)
+## install basic tools (201 MB)
 apt update
-apt install curl fastfetch git htop man-db neovim
+apt install curl fastfetch git htop locales man-db neovim
 
 ## install iwd and systemd additional/alternative tools (32 MB)
 apt install iwd systemd-cron systemd-homed systemd-oomd systemd-resolved systemd-timesyncd systemd-userdbd systemd-zram-generator
@@ -52,7 +58,9 @@ systemctl enable --now cron.target
 systemctl status cron.target
 systemctl list-timers
 
-# (systemd-homed)
+# manage users (systemd-homed and systemd-userdbd)
+systemctl enable --now systemd-homed.service systemd-userdbd.service
+homectl create tormena --storage=luks --real-name="Osmar Tormena Júnior"
 
 # (systemd-oomd)
 
@@ -62,8 +70,6 @@ timedatectl set-local-rtc 0
 timedatectl set-timezone America/Sao_Paulo
 timedatectl set-ntp true
 timedatectl status
-
-# (systemd-userdbd)
 
 # swap in zram (systemd-zram-generator)
 cp /usr/lib/systemd/zram-generator.conf /etc/systemd
