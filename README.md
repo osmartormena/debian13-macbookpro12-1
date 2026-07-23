@@ -111,11 +111,15 @@ Restart the network stack:
 
 Set up the firewall:
 
-ufw default deny incoming
-ufw default allow outgoing
-systemctl enable ufw.service
-ufw enable
-ufw status
+`ufw default deny incoming`
+
+`ufw default allow outgoing`
+
+`systemctl enable ufw.service`
+
+`ufw enable`
+
+`ufw status`
 
 ### cron jobs
 systemctl enable --now cron.target
