@@ -29,24 +29,43 @@ Install systemd-boot as your bootloader.
 
 ## Adjust console font, encoding, keyboard and environment
 
-Reconfirm UTF-8 and Latin1 and Latin5. Set font to TerminusBold, size 16x32.
+Reconfirm UTF-8 and Latin1 and Latin5. Set font to TerminusBold, size 16x32:
 
 `dpkg-reconfigure console-setup`
 
-Set keboard to Apple > English (US, intl., with dead keys)
+Set keboard to Apple > English (US, intl., with dead keys):
 
 `dpkg-reconfigure keyboard-configuration`
+
 `setupcon`
 
-## silencie mensagens do kernel no console
-"append loglevel=3 to /etc/kernel/cmdline"
-update-initramfs -u -k all
-reboot
+Uncomment the second and third block of command from `.bashrc`.
 
-## remove initial "bloat" (40 MB)
-apt purge --autoremove anacron bluetooth cron cron-daemon-common debconf-i18n installation-report nano tasksel vim-common vim-tiny wireless-tools
-truncate -s 0 /etc/motd
-rm /etc/update-motd.d/10-uname
+## Silence the kernel messages and other garbage output
+
+Append `loglevel=3` to `/etc/kernel/cmdline`.
+
+`update-initramfs -u -k all`
+
+`truncate -s 0 /etc/motd`
+
+`rm /etc/update-motd.d/10-uname`
+
+`reboot`
+
+Now, at least, we have a properly configured base system.
+
+## remove initial "bloat" (45.5 MB)
+
+Let's save the current list of installed packages (222):
+
+`dpkg -l > base.list`
+
+Let's purge unnecessary packages:
+
+`apt purge --autoremove alsa-topology-conf alsa-ucm-conf anacron bluetooth bluez cron cron-daemon-common debconf-i18n installation-report nano tasksel tasksel-data vim-common vim-tiny wireless-tools`
+
+Now we have 190 packages to build upon.
 
 ## install basic tools (201 MB)
 apt update
