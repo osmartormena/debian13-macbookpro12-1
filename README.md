@@ -43,7 +43,7 @@ Uncomment the second and third block of command from `.bashrc`.
 
 Change boot from `graphical.target` to `multi-user.target`:
 
-`sudo systemctl set-default multi-user.target`
+`systemctl set-default multi-user.target`
 
 ## Silence the kernel messages and other garbage output
 
