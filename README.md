@@ -41,6 +41,10 @@ Set keboard to Apple > English (US, intl., with dead keys):
 
 Uncomment the second and third block of command from `.bashrc`.
 
+Change boot from `graphical.target` to `multi-user.target`:
+
+`sudo systemctl set-default multi-user.target`
+
 ## Silence the kernel messages and other garbage output
 
 Append `loglevel=3` to `/etc/kernel/cmdline`.
