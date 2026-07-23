@@ -13,7 +13,7 @@ install systemd-boot;
 
 ## adjust console font and encoding
 dpkg-reconfigure console-setup
-cat >> $HOME << EOF
+cat >> $HOME/.profile << EOF
 
 export LANG="C.UTF-8"
 EOF
@@ -35,7 +35,7 @@ apt update
 apt install curl fastfetch git htop locales man-db neovim
 
 ## install iwd and systemd additional/alternative tools (32 MB)
-apt install iwd systemd-cron systemd-homed systemd-oomd systemd-resolved systemd-timesyncd systemd-userdbd systemd-zram-generator
+apt install iwd systemd-cron systemd-cryptsetup systemd-homed systemd-oomd systemd-resolved systemd-timesyncd systemd-userdbd systemd-zram-generator
 systemctl daemon-reload
 
 # networking (iwd and systemd-resolved)
@@ -58,9 +58,11 @@ systemctl enable --now cron.target
 systemctl status cron.target
 systemctl list-timers
 
-# manage users (systemd-homed and systemd-userdbd)
+# manage users (systemd-cryptsetup, systemd-homed, and systemd-userdbd)
 systemctl enable --now systemd-homed.service systemd-userdbd.service
-homectl create tormena --storage=luks --real-name="Osmar Tormena Júnior"
+homectl create tormena --member-os=sudo --shell=/bin/bash --storage=luks --real-name="Osmar Tormena Júnior"
+homectl inspect tormena
+userdbctl user tormena
 
 # (systemd-oomd)
 
@@ -77,22 +79,22 @@ systemctl start /dev/zram0
 zramctl
 
 ## Firewall
-sudo apt install ufw
-sudo ufw default deny incoming
-sudo ufw default allow outgoing
-sudo systemctl enable —now ufw
-sudo ufw enable
-sudo /sbin/ufw status
+apt install ufw
+ufw default deny incoming
+ufw default allow outgoing
+systemctl enable ufw.service
+ufw enable
+ufw status
 
 ## Apple hardware tweaks
-sudo apt install mbpfan
-sudo systemctl enable —now mbpfan
+apt install mbpfan
+systemctl enable —now mbpfan.service
 
 ## Power management
 TODO: powertop já instalado, configurar com bateria.
 
 ## Build tools
-sudo apt install build-essential gfortran
+apt install build-essential gfortran
 
 
 ## X11
