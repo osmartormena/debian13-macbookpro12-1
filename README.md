@@ -99,6 +99,31 @@ Edit `/etc/iwd/main.conf`:
 
 `systemctl enable --now iwd.service systemd-resolved.service`
 
+Set regulatory region:
+
+`iw reg set BR`
+
+Create an unit to set the region at every boot. The file will be `/etc/systemd/system/wireless-regdom.service`:
+
+`systemctl --force --full wireless-regdom`
+
+[Unit]
+Description=Set Wireless Regulatory Domain
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStartPre=/bin/sleep 2
+ExecStart=/usr/sbin/iw reg set <COUNTRY_CODE>
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+
+`systemctl daemon-reload`
+
+`systemctl enable --now wireless-regdom.service`
+
 Setup wireless network (again):
 
 `iwctl`
