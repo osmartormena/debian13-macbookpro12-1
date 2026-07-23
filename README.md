@@ -1,38 +1,42 @@
 # debian13-macbookpro12-1
-Step-by-step installation guide for Debian 13 (minimal) in a MacBookPro12,1:
 
-Select expert install:
+## Step-by-step installation guide for Debian 13 (minimal) in a MacBookPro12,1
 
-Select language — C (no localization);
+Select expert install.
 
-Configure locales — C.UTF-8 — set as default;
+Select language — C (no localization).
 
-Do not load "missing" firmware for Wi-Fi;
+Configure locales — C.UTF-8 — set as default.
 
-Create an user account later;
+Do not load "missing" firmware for Wi-Fi.
 
-Set time to UTC;
+Create an user account later.
 
-Manual partition (UEFI, /, and /home), unencrypted, noatime set, no swap;
+Set time to UTC.
 
-Use linux-image-amd64 and select targeted kernel;
+Manual partition (UEFI, /, and /home), unencrypted, noatime set, no swap.
 
-Choose Latin1 and Latin5;
+Use linux-image-amd64 and select targeted kernel.
 
-Use non-free firmware and nonfree software, but no source repository;
+Choose Latin1 and Latin5.
 
-No automatic updates, no package usage survey, deselect all software;
+Use non-free firmware and nonfree software, but no source repository.
 
-Install systemd-boot as your bootloader;
+No automatic updates, no package usage survey, deselect all software.
 
-## adjust console font and encoding
-dpkg-reconfigure console-setup
-cat >> $HOME/.profile << EOF
+Install systemd-boot as your bootloader.
 
-export LANG="C.UTF-8"
-EOF
 
-dpkg-reconfigure keyboard-configuration
+## Adjust console font, encoding, keyboard and environment
+
+Reconfirm UTF-8 and Latin1 and Latin5. Set font to TerminusBold, size 16x32.
+
+`dpkg-reconfigure console-setup`
+
+Set keboard to Apple > English (US, intl., with dead keys)
+
+`dpkg-reconfigure keyboard-configuration`
+`setupcon`
 
 ## silencie mensagens do kernel no console
 "append loglevel=3 to /etc/kernel/cmdline"
