@@ -27,7 +27,7 @@ No automatic updates, no package usage survey, deselect all software.
 Install systemd-boot as your bootloader.
 
 
-## Adjust console font, encoding, keyboard and environment
+### Adjust console font, encoding, keyboard and environment
 
 Reconfirm UTF-8 and Latin1 and Latin5. Set font to TerminusBold, size 16x32:
 
@@ -45,7 +45,7 @@ Change boot from `graphical.target` to `multi-user.target`:
 
 `systemctl set-default multi-user.target`
 
-## Silence the kernel messages and other garbage output
+### Silence the kernel messages and other garbage output
 
 Append `loglevel=3` to `/etc/kernel/cmdline`.
 
@@ -59,7 +59,7 @@ Append `loglevel=3` to `/etc/kernel/cmdline`.
 
 Now, at least, we have a properly configured base system.
 
-## remove initial "bloat" (39.5 MB)
+### remove initial "bloat" (39.5 MB)
 
 Let's save the current list of installed packages (222):
 
@@ -71,72 +71,83 @@ Let's purge unnecessary packages:
 
 Now we have 196 packages to build upon.
 
-## install basic tools (201 MB)
-apt update
-apt install curl fastfetch git htop locales man-db neovim
+## Install newer tools (623 MB)
 
-## install iwd and systemd additional/alternative tools (32 MB)
-apt install iwd systemd-cron systemd-cryptsetup systemd-homed systemd-oomd systemd-resolved systemd-timesyncd systemd-userdbd systemd-zram-generator
-systemctl daemon-reload
+`apt update`
 
-# networking (iwd and systemd-resolved)
-systemctl disable --now  ifup@wlp3s0.service ifupdown-pre.service  networking.service wpa_supplicant.service
-"edit /etc/iwd/main.conf"
-  EnableNetworkConfiguration=true
-  NameResolvingService=systemd
+`apt install build-essential curl dracut fastfetch gfortran git htop iwd man-db mbpfan neovim systemd-cron systemd-cryptsetup systemd-homed systemd-resolved systemd-timesyncd systemd-ukify systemd-userdbd systemd-zram-generator ufw`
 
-systemctl enable --now iwd.service systemd-resolved.service
-iwctl
+`systemctl daemon-reload`
 
-systemctl restart iwd.service systemd-resolved.service
-resolvectl status
+Now we have 397 packages.
 
-apt purge --autoremove dhcpcd-base ifupdown wpasupplicant
-rm -rf /etc/network/ /run/network/
+### Apple hardware tweaks
 
-# cron jobs (systemd-cron)
-systemctl enable --now cron.target
-systemctl status cron.target
-systemctl list-timers
+`systemctl enable —now mbpfan.service`
 
-# manage users (systemd-cryptsetup, systemd-homed, and systemd-userdbd)
-systemctl enable --now systemd-homed.service systemd-userdbd.service
-homectl create tormena --member-os=sudo --shell=/bin/bash --storage=luks --real-name="Osmar Tormena Júnior"
-homectl inspect tormena
-userdbctl user tormena
+### networking and firewall
 
-# (systemd-oomd)
+Disable conflicting services:
 
-# time synchronization (systemd-timesyncd)
-systemctl enable --now systemd-timesyncd.service
-timedatectl set-local-rtc 0
-timedatectl set-timezone America/Sao_Paulo
-timedatectl set-ntp true
-timedatectl status
+`systemctl disable --now  ifupdown-pre.service  networking.service wpa_supplicant.service`
 
-# swap in zram (systemd-zram-generator)
-cp /usr/lib/systemd/zram-generator.conf /etc/systemd
-systemctl start /dev/zram0
-zramctl
+Edit `/etc/iwd/main.conf`:
 
-## Firewall
-apt install ufw
+  `EnableNetworkConfiguration=true`
+  
+  `NameResolvingService=systemd`
+
+`systemctl enable --now iwd.service systemd-resolved.service`
+
+Setup wireless network (again):
+
+`iwctl`
+
+Restart the network stack:
+
+`systemctl restart iwd.service systemd-resolved.service`
+
+`resolvectl status`
+
+Set up the firewall:
+
 ufw default deny incoming
 ufw default allow outgoing
 systemctl enable ufw.service
 ufw enable
 ufw status
 
-## Apple hardware tweaks
-apt install mbpfan
-systemctl enable —now mbpfan.service
+### cron jobs
+systemctl enable --now cron.target
+systemctl status cron.target
+systemctl list-timers
 
-## Power management
-TODO: powertop já instalado, configurar com bateria.
+### manage users
+systemctl enable --now systemd-homed.service systemd-userdbd.service
+homectl create tormena --member-os=sudo --shell=/bin/bash --storage=luks --real-name="Osmar Tormena Júnior"
+homectl inspect tormena
+userdbctl user tormena
 
-## Build tools
-apt install build-essential gfortran
+### time synchronization
+systemctl enable --now systemd-timesyncd.service
+timedatectl set-local-rtc 0
+timedatectl set-timezone America/Sao_Paulo
+timedatectl set-ntp true
+timedatectl status
 
+### swap in zram
+cp /usr/lib/systemd/zram-generator.conf /etc/systemd
+systemctl start /dev/zram0
+zramctl
+
+### Power management
+TODO: powertop already installed, setup when battery is replaced.
+
+### Purge of substituted packages
+
+`apt purge --autoremove adduser dhcpcd-base ifupdown wpasupplicant`
+
+`rm -rf /etc/network/ /run/network/`
 
 ## X11
 sudo apt install xorg xorg-dev
