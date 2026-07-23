@@ -1,15 +1,29 @@
-### debian13-macbookpro12-1
+# debian13-macbookpro12-1
 Step-by-step installation guide for Debian 13 (minimal) in a MacBookPro12,1:
 
-select expert install;
-localization set to C (no localization);
-do not load "missing" firmware;
-create an user account later;
-set time to UTC;
-manual partition (UEFI, /, and /home), with encrypted /home, and noatime set;
-use non-free firmware and nonfree software, but no source repository;
-no automatic updates, no package usage survey, deselect all software;
-install systemd-boot;
+Select expert install:
+
+Select language — C (no localization);
+
+Configure locales — C.UTF-8 — set as default;
+
+Do not load "missing" firmware for Wi-Fi;
+
+Create an user account later;
+
+Set time to UTC;
+
+Manual partition (UEFI, /, and /home), unencrypted, noatime set, no swap;
+
+Use linux-image-amd64 and select targeted kernel;
+
+Choose Latin1 and Latin5;
+
+Use non-free firmware and nonfree software, but no source repository;
+
+No automatic updates, no package usage survey, deselect all software;
+
+Install systemd-boot as your bootloader;
 
 ## adjust console font and encoding
 dpkg-reconfigure console-setup
