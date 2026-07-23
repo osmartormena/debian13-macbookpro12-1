@@ -59,7 +59,7 @@ Append `loglevel=3` to `/etc/kernel/cmdline`.
 
 Now, at least, we have a properly configured base system.
 
-## remove initial "bloat" (45.5 MB)
+## remove initial "bloat" (39.5 MB)
 
 Let's save the current list of installed packages (222):
 
@@ -69,7 +69,7 @@ Let's purge unnecessary packages:
 
 `apt purge --autoremove alsa-topology-conf alsa-ucm-conf anacron bluetooth bluez cron cron-daemon-common debconf-i18n installation-report nano tasksel tasksel-data vim-common vim-tiny wireless-tools`
 
-Now we have 190 packages to build upon.
+Now we have 196 packages to build upon.
 
 ## install basic tools (201 MB)
 apt update
