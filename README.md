@@ -81,6 +81,10 @@ Now we have 196 packages to build upon.
 
 Now we have 397 packages.
 
+### Power management
+
+TODO: powertop already installed, setup when battery is replaced.
+
 ### Apple hardware tweaks
 
 `systemctl enable —now mbpfan.service`
@@ -108,16 +112,24 @@ Create an unit to set the region at every boot. The file will be `/etc/systemd/s
 `systemctl --force --full wireless-regdom`
 
 [Unit]
+
 Description=Set Wireless Regulatory Domain
+
 After=network.target
 
+
 [Service]
+
 Type=oneshot
+
 ExecStartPre=/bin/sleep 2
-ExecStart=/usr/sbin/iw reg set <COUNTRY_CODE>
+
+ExecStart=/usr/sbin/iw reg set BR
+
 RemainAfterExit=yes
 
 [Install]
+
 WantedBy=multi-user.target
 
 `systemctl daemon-reload`
@@ -146,41 +158,50 @@ Set up the firewall:
 
 `ufw status`
 
+### purge network breaking (and additional) packages
+
+`apt purge --autoremove adduser dhcpcd-base ifupdown wpasupplicant`
+
+`rm -rf /etc/network/ /etc/initramfs-tools/conf.d/`
+
 ### cron jobs
-systemctl enable --now cron.target
-systemctl status cron.target
-systemctl list-timers
+
+`systemctl enable --now cron.target`
+
+`systemctl status cron.target`
+
+`systemctl list-timers`
+
+### time synchronization
+
+`systemctl enable --now systemd-timesyncd.service`
+
+`timedatectl set-local-rtc false`
+
+`timedatectl set-timezone America/Sao_Paulo`
+
+`timedatectl set-ntp true`
+
+`timedatectl status`
+
+### swap in zram
+
+`cp /usr/lib/systemd/zram-generator.conf /etc/systemd`
+
+`systemctl start /dev/zram0`
+
+`zramctl`
 
 ### manage users
+
 systemctl enable --now systemd-homed.service systemd-userdbd.service
 homectl create tormena --member-os=sudo --shell=/bin/bash --storage=luks --real-name="Osmar Tormena Júnior"
 homectl inspect tormena
 userdbctl user tormena
 
-### time synchronization
-systemctl enable --now systemd-timesyncd.service
-timedatectl set-local-rtc 0
-timedatectl set-timezone America/Sao_Paulo
-timedatectl set-ntp true
-timedatectl status
-
-### swap in zram
-cp /usr/lib/systemd/zram-generator.conf /etc/systemd
-systemctl start /dev/zram0
-zramctl
-
-### Power management
-TODO: powertop already installed, setup when battery is replaced.
-
-### Purge of substituted packages
-
-`apt purge --autoremove adduser dhcpcd-base ifupdown wpasupplicant`
-
-`rm -rf /etc/network/ /run/network/`
-
 ## X11
 sudo apt install xorg xorg-dev
-sudo usermod-aG input tormena
+sudo usermod -aG input tormena
 # logout e login
 # crie ~/.xinitrc
 
