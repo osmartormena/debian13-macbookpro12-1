@@ -59,16 +59,6 @@ Append `loglevel=3` to `/etc/kernel/cmdline`.
 
 Now, at least, we have a properly configured base system.
 
-### remove initial "bloat" (39.5 MB)
-
-Let's save the current list of installed packages (222):
-
-`dpkg -l > base.list`
-
-Let's purge unnecessary packages:
-
-`apt purge --autoremove alsa-topology-conf alsa-ucm-conf anacron bluetooth bluez cron cron-daemon-common debconf-i18n installation-report nano tasksel tasksel-data vim-common vim-tiny wireless-tools`
-
 Now we have 196 packages to build upon.
 
 ## Install newer tools (623 MB)
@@ -77,9 +67,15 @@ Now we have 196 packages to build upon.
 
 `apt install build-essential curl dracut fastfetch gfortran git htop iwd man-db mbpfan neovim systemd-cron systemd-cryptsetup systemd-homed systemd-resolved systemd-timesyncd systemd-ukify systemd-userdbd systemd-zram-generator ufw`
 
+Let's purge unnecessary packages:
+
+`apt purge --autoremove alsa-topology-conf alsa-ucm-conf anacron bluetooth bluez cron debconf-i18n dhcpcd-base ifupdown installation-report nano tasksel tasksel-data vim-common vim-tiny wireless-tools wpasupplicant`
+
+`rm -rf /etc/network/ /etc/initramfs-tools/conf.d/`
+
 `systemctl daemon-reload`
 
-Now we have 397 packages.
+`reboot`
 
 ### Power management
 
@@ -90,10 +86,6 @@ TODO: powertop already installed, setup when battery is replaced.
 `systemctl enable —now mbpfan.service`
 
 ### networking and firewall
-
-Disable conflicting services:
-
-`systemctl disable --now  ifupdown-pre.service  networking.service wpa_supplicant.service`
 
 Edit `/etc/iwd/main.conf`:
 
@@ -157,12 +149,6 @@ Set up the firewall:
 `ufw enable`
 
 `ufw status`
-
-### purge network breaking (and additional) packages
-
-`apt purge --autoremove adduser dhcpcd-base ifupdown wpasupplicant`
-
-`rm -rf /etc/network/ /etc/initramfs-tools/conf.d/`
 
 ### cron jobs
 
