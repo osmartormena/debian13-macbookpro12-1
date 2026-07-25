@@ -61,11 +61,11 @@ Now, at least, we have a properly configured base system.
 
 Now we have 196 packages to build upon.
 
-## Install newer tools (623 MB)
+## Install newer tools
 
 `apt update`
 
-`apt install build-essential curl dracut fastfetch gfortran git htop iwd man-db mbpfan neovim systemd-cron systemd-cryptsetup systemd-homed systemd-resolved systemd-timesyncd systemd-ukify systemd-userdbd systemd-zram-generator ufw`
+`apt install build-essential curl dracut fastfetch gfortran git htop iwd man-db mbpfan neovim sudo systemd-cron systemd-cryptsetup systemd-homed systemd-resolved systemd-timesyncd systemd-ukify systemd-userdbd systemd-zram-generator ufw`
 
 Let's purge unnecessary packages:
 
@@ -215,10 +215,13 @@ Set up the firewall:
 
 ### manage users
 
-systemctl enable --now systemd-homed.service systemd-userdbd.service
-homectl create tormena --member-os=sudo --shell=/bin/bash --storage=luks --real-name="Osmar Tormena Júnior"
-homectl inspect tormena
-userdbctl user tormena
+`systemctl enable --now systemd-homed.service systemd-userdbd.socket`
+
+`homectl create tormena --member-os=sudo --storage=luks --real-name="Osmar Tormena Júnior"`
+
+`homectl inspect tormena`
+
+`userdbctl user tormena`
 
 ## X11
 sudo apt install xorg xorg-dev
