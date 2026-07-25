@@ -178,6 +178,41 @@ Set up the firewall:
 
 `zramctl`
 
+### Unified kernel image
+
+`cat > /etc/kernel/install.conf << EOF`
+
+`layout=uki`
+
+`EOF`
+
+`cat > /etc/dracut.conf.d/10-hostonly.conf << EOF`
+
+`hostonly=yes`
+
+`hostonly_mode=strict`
+
+`compress="zstd"`
+
+`EOF`
+
+`cat > /etc/systemd/ukify.conf << EOF`
+
+`[UKI]`
+
+`Cmdline=@/etc/kernel/cmdline`
+
+`OSRelease=@/etc/os-release`
+
+`EOF`
+
+`dracut --force /boot/initrd.img-$(uname -r) $(uname -r)`
+
+`ukify build \
+    --linux /boot/vmlinuz-$(uname -r) \
+    --initrd /boot/initrd.img-$(uname -r) \
+    --output /boot/efi/EFI/Linux/debian-$(uname -r).efi`
+
 ### manage users
 
 systemctl enable --now systemd-homed.service systemd-userdbd.service
