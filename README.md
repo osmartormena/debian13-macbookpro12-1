@@ -237,9 +237,17 @@ Set up the firewall:
 
 # In the user account
 
+Create `~/.Xresources`:
+
+`Xft.dpi: 227`
+
 Create `~/.xinitrc`:
 
 `#!/bin/sh`
+
+`xrdb -merge ~/.Xresources`
+
+`slstatus &`
 
 `exec dbus-run-session -- dwm`
 
