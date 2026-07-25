@@ -223,22 +223,27 @@ Set up the firewall:
 
 `userdbctl user tormena`
 
-## X11
-sudo apt install xorg xorg-dev
-sudo usermod -aG input tormena
-# logout e login
-# crie ~/.xinitrc
+## X11 + suckless
 
-#!/bin/sh
-exec dbus-run-session — dwm
+`apt install xorg xorg-dev`
 
-# torne executável
-chmod +x ~/.xinitrc
+`git clone https://git.suckless.org/dwm`
 
-## suckless
-sudo apt install libgtk-4-dev libwebkit2gtk-4.1-dev libgcr-3-dev
-git clone https://git.suckless.org/dwm
-git clone https://git.suckless.org/st
-git clone https://git.suckless.org/surf
-git clone https://git.suckless.org/dmenu
-git clone https://git.suckless.org/slstatus
+`git clone https://git.suckless.org/st`
+
+`git clone https://git.suckless.org/dmenu`
+
+`git clone https://git.suckless.org/slstatus`
+
+# In the user account
+
+Create `~/.xinitrc`:
+
+`#!/bin/sh`
+
+`exec dbus-run-session -- dwm`
+
+Torne executável:
+
+`chmod +x ~/.xinitrc`
+
