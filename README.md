@@ -223,9 +223,9 @@ Set up the firewall:
 
 `userdbctl user tormena`
 
-## X11 + suckless
+## X11 + firefox + suckless
 
-`apt install xorg xorg-dev`
+`apt install xorg xorg-dev firefox-esr`
 
 `git clone https://git.suckless.org/dwm`
 
@@ -254,4 +254,6 @@ Create `~/.xinitrc`:
 Torne executável:
 
 `chmod +x ~/.xinitrc`
+
+Adjust firefox font size: open firefox, type `about:config` in the address bar; search for `layout.css.devPixelsPerPx` preference and set to `0.8`.
 
