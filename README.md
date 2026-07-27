@@ -1,5 +1,7 @@
 # debian13-macbookpro12-1
 
+Disclaimer: This is a personal script for my own setup: that being said, if anyone out there needs to get his Early 2015 MacBook Pro 13" working with Linux, without hacks or anything, some of the steps I've taken in the wireless setup may be of some help. For that reason only this repo is public. The steps provided here have worked for me, in my main production machine --- mostly Matlab and LaTeX.
+
 ## Step-by-step installation guide for Debian 13 (minimal) in a MacBookPro12,1
 
 Select expert install.
